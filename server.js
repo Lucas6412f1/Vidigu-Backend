@@ -11,7 +11,7 @@ const server = http.createServer(app); // Maak een HTTP server voor Express en S
 
 // Configureer CORS voor Express (voor je frontend)
 // Zorg ervoor dat je de exacte URL van je GitHub Pages site hier invult
-// DEZE WAARDE KOMT VAN JE .env of Render ENV VARS
+// DEZE WAARDE KOMT VAN JE .env (lokaal) of Render ENV VARS (deployment)
 const corsOptions = {
     origin: process.env.FRONTEND_URL || 'http://localhost:8080', // Bijv. 'https://lucas6412f1.github.io/Vidigu/'
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
             const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
             username = payload.username || 'Authenticated User';
             socket.userRole = payload.role || 'user'; // Rol van de gebruiker (bijv. 'streamer', 'moderator', 'user')
-            console.log(`User <span class="math-inline">\{username\} \(</span>{socket.userRole}) connected.`);
+            console.log(`User ${username} (${socket.userRole}) connected.`);
         } catch (e) {
             console.warn("Invalid token for Socket.IO connection:", e.message);
             username = 'Invalid Token User';
@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
 
         // Stuur chatgeschiedenis naar de nieuwe gebruiker
         if (chatRooms[roomName]) {
-            socket.emit('chatHistory', chatRooms[roomMame]);
+            socket.emit('chatHistory', chatRooms[roomName]);
         } else {
             chatRooms[roomName] = []; // Maak een nieuwe chatroom aan als deze nog niet bestaat
         }
